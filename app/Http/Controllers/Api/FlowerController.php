@@ -33,7 +33,7 @@ class FlowerController extends Controller
     {
         $data = $request->all();
         
-        // Decode color JSON string if it's sent as a string (from FormData)
+      
         if ($request->has('color') && is_string($request->color)) {
             $data['color'] = json_decode($request->color, true);
         }

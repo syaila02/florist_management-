@@ -13,7 +13,6 @@ class OrderController extends Controller
     {
         $query = Order::with('flower');
 
-        // Jika user mengirimkan daftar ID (untuk Guest Lacak Pesanan)
         if ($request->has('ids')) {
             $ids = explode(',', $request->ids);
             $query->whereIn('id', $ids);
@@ -33,10 +32,8 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Find the flower
         $flower = Flower::find($request->flower_id);
         
-        // 2. Validate availability and stock
         if (!$flower) {
             return response()->json([
                 'status' => 'error',
@@ -53,16 +50,13 @@ class OrderController extends Controller
             ], 400);
         }
 
-        // 3. Create the order
         $data = $request->all();
-        // Pastikan status default adalah Pending jika tidak dikirim
         if (!isset($data['status'])) {
             $data['status'] = 'Pending';
         }
         
         $order = Order::create($data);
 
-        // 4. Decrement stock
         $flower->decrement('stock', $quantity);
 
         return response()->json([
